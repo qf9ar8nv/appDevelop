@@ -102,10 +102,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     var textSection = Container(
       child: Text(
-          'dasdgsdgqwegsdg'
-          'ddddd'
-          'ddddsafasdf'
-          'asdfasdfaweqwef',
+          'text style',
           style: TextStyle(fontSize: 20)),
       padding: EdgeInsets.all(15.0),
     );
