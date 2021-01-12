@@ -28,6 +28,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  bool _isStared = false;
+  int _count = 41;
+
   @override
   Widget build(BuildContext context) {
     var titleSection = Row(
@@ -45,13 +48,24 @@ class _MyHomePageState extends State<MyHomePage> {
         Padding(
           padding: EdgeInsets.all(15.0),
         ),
-        Icon(
-          Icons.star,
-          size: 35,
+        IconButton(
+          onPressed: (){
+            setState(() {
+              if(_isStared){
+                _isStared = false;
+                _count -= 1;
+              }else{
+                _isStared = true;
+                _count += 1;
+              }
+            });
+          },
+          icon: (_isStared ? Icon(Icons.star) : Icon(Icons.star_border)),
+          iconSize: 35,
           color: Colors.deepOrange,
         ),
         Text(
-          '41',
+          '$_count',
           style: TextStyle(fontSize: 30),
         )
       ],
