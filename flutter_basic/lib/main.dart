@@ -45,19 +45,41 @@ class _HelloPageState extends State<HelloPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: _changeMessage),
-        appBar: AppBar(
-          title: Text(widget.title),
+  appBar: AppBar(
+    title: const Text('Drawer Demo'),
+  ),
+  drawer: Drawer(
+    child: ListView(
+      padding: EdgeInsets.zero,
+      children: const <Widget>[
+        DrawerHeader(
+          decoration: BoxDecoration(
+            color: Colors.blue,
+          ),
+          child: Text(
+            'Drawer Header',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+            ),
+          ),
         ),
-        body: Text(_message, style: TextStyle(fontSize: 30),));
-  }
-
-  void _changeMessage() {
-    setState(() {
-      _message = '헬로 월드';
-    });
+        ListTile(
+          leading: Icon(Icons.message),
+          title: Text('Messages'),
+        ),
+        ListTile(
+          leading: Icon(Icons.account_circle),
+          title: Text('Profile'),
+        ),
+        ListTile(
+          leading: Icon(Icons.settings),
+          title: Text('Settings'),
+        ),
+      ],
+    ),
+  ),
+)
   }
 }
 
