@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'cupertino_page.dart';
 
 void main() {
   runApp(MyApp());
@@ -51,7 +52,19 @@ class _HelloPageState extends State<HelloPage> {
         appBar: AppBar(
           title: Text(widget.title),
         ),
-        body: Text(_message, style: TextStyle(fontSize: 30),));
+        body: Center(
+          child: Column(
+            children: [
+              Text(_message, style: TextStyle(fontSize: 30),),
+              RaisedButton(onPressed: (){
+                Navigator.push(context,
+                MaterialPageRoute(builder: (context) => Cupertinopage()));
+              }, child: Text('화면 이동'),)
+            ],
+          ),
+        )
+
+    );
   }
 
   void _changeMessage() {
