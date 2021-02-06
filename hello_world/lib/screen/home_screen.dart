@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hello_world/model/model_movie.dart';
+import 'package:hello_world/widget/carousel_slider.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -12,7 +13,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'title': '사랑의 불시착',
       'keyword': '사랑/로맨스/판타지',
       'poster': 'test_movie_1.png',
-      'like': false,
+      'like': false
     })
   ];
   @override
@@ -22,7 +23,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return TopBar();
+    return ListView(children: <Widget>[
+      Stack(children: <Widget>[
+        CarouselImage(movies: movies,),
+        TopBar(),
+      ],)
+    ],);
   }
 }
 
