@@ -1,11 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class AccountPage extends StatelessWidget {
-//  final FirebaseUser user;
+  final User user;
 
-//  AccountPage(this.user);
-
+  AccountPage(this.user);
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class AccountPage extends StatelessWidget {
                   child: GestureDetector(
                     onTap: () => print('이미지 클릭'),
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(''),
+                      backgroundImage: NetworkImage(user.photoURL),
                     ),
                   ),
                 ),
@@ -79,7 +81,7 @@ class AccountPage extends StatelessWidget {
               padding: EdgeInsets.all(8.0),
             ),
             Text(
-              '더미 유저',
+              user.displayName,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             )
@@ -121,7 +123,8 @@ class AccountPage extends StatelessWidget {
           color: Colors.black,
           onPressed: () {
             // 로그아웃
-
+            FirebaseAuth.instance.signOut(); //Stream에서 firebase기반 로그아웃.
+            _googleSignIn.signOut(); //핸드폰에서 구글계정 로그아웃.
           },
         )
       ],
