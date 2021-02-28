@@ -54,10 +54,9 @@ class DetailPostPage extends StatelessWidget {
 
                               var data = snapshot.data.data;
 
-                              if(data == null
-
-                              // 해야함
-                              ){
+                              if(data() == null ||
+                                  data()[document['email']] == null ||
+                                  data()[document['email']] == false){
                                 return GestureDetector(
                                   onTap: _follow,
                                   child: Text(
@@ -69,11 +68,11 @@ class DetailPostPage extends StatelessWidget {
                                 );
                               }
                               return GestureDetector(
-                                onTap: _follow,
+                                onTap: _unfollow,
                                 child: Text(
-                                  "팔로우",
+                                  "언팔로우",
                                   style: TextStyle(
-                                      color: Colors.blue,
+                                      color: Colors.red,
                                       fontWeight: FontWeight.bold),
                                 ),
                               );
@@ -111,12 +110,12 @@ class DetailPostPage extends StatelessWidget {
     FirebaseFirestore.instance
         .collection('following')
         .doc(user.email)
-        .set({document['email']: true});
+        .set({document['email']: true}, SetOptions(merge: true));
 
     FirebaseFirestore.instance
-        .collection('following')
+        .collection('follower')
         .doc(document['email'])
-        .set({user.email: true});
+        .set({user.email: true}, SetOptions(merge: true));
   }
 
   // 언팔로우
@@ -124,12 +123,12 @@ class DetailPostPage extends StatelessWidget {
     FirebaseFirestore.instance
         .collection('following')
         .doc(user.email)
-        .set({document['email']: false});
+        .set({document['email']: false}, SetOptions(merge: true));
 
     FirebaseFirestore.instance
-        .collection('following')
+        .collection('follower')
         .doc(document['email'])
-        .set({user.email: false});
+        .set({user.email: false}, SetOptions(merge: true));
   }
 
   // 팔로잉 상태를 얻는 스트림
