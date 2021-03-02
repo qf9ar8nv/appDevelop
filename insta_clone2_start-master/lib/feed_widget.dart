@@ -26,9 +26,9 @@ class _FeedWidgetState extends State<FeedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var comment = 0;
-    if (widget.document.data().containsKey('comment')) {
-      comment = widget.document['comment'];
+    var commentCount = 0;
+    if (widget.document.data().containsKey('commentCount')) {
+      commentCount = widget.document['commentCount'];
     }
     var liked = 0;
     var has_liked = false;
@@ -117,33 +117,34 @@ class _FeedWidgetState extends State<FeedWidget> {
         SizedBox(
           height: 8.0,
         ),
-        GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CommentPage(widget.document),
-              ),
-            );
-          },
-          child: Padding(
-            padding: const EdgeInsets.only(left: 16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      '댓글 $comment개 모두 보기',
-                      style: TextStyle(color: Colors.grey[500]),
-                    ),
-                  ],
+        if (commentCount > 0)
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CommentPage(widget.document),
                 ),
+              );
+            },
+            child: Padding(
+              padding: const EdgeInsets.only(left: 16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Text(
+                        '댓글 $commentCount개 모두 보기',
+                        style: TextStyle(color: Colors.grey[500]),
+                      ),
+                    ],
+                  ),
 //                Text(widget.document['lastComment'] ?? ""),
-              ],
+                ],
+              ),
             ),
           ),
-        ),
         Row(
           children: <Widget>[
             Expanded(
@@ -212,5 +213,27 @@ class _FeedWidgetState extends State<FeedWidget> {
   }
 
   // 댓글 작성
-  void _writeComment(String text) {}
+  void _writeComment(String text) {
+    final data = {
+      'writer': widget.user.email,
+      'comment': text,
+    };
+
+    // 댓글 추가
+    FirebaseFirestore.instance
+    .collection('post')
+    .doc(widget.document.id)
+    .collection('comment')
+    .add(data);
+
+    final updataData = {
+      'lastComment': text,
+      'commentCount': (widget.document['commentCount'] ?? 0) + 1,
+    };
+    FirebaseFirestore.instance
+    .collection('post')
+    .doc(widget.document.id)
+    .update(updataData);
+
+  }
 }
