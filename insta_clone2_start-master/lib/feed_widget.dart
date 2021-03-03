@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 
 import 'comment_page.dart';
@@ -26,18 +27,8 @@ class _FeedWidgetState extends State<FeedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    var commentCount = 0;
-    if (widget.document.data().containsKey('commentCount')) {
-      commentCount = widget.document['commentCount'];
-    }
-    var liked = 0;
-    var has_liked = false;
-    if (widget.document.data().containsKey('likedUsers')) {
-      liked = widget.document['likedUsers'].length;
-      if (widget.document['likedUsers'].contains(widget.user.email)) {
-        has_liked = true;
-      }
-    }
+    var commentCount = widget.document.data()['commentCount'] ?? 0;
+
     return Column(
       children: <Widget>[
         ListTile(
@@ -60,19 +51,21 @@ class _FeedWidgetState extends State<FeedWidget> {
           leading: Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (has_liked)
-                GestureDetector(
-                  child: Icon(
-                    Icons.favorite,
-                    color: Colors.red,
-                  ),
-                  onTap: _unlike,
-                ),
-              if (!has_liked)
-                GestureDetector(
-                  child: Icon(Icons.favorite_border),
-                  onTap: _like,
-                ),
+              widget.document
+                          .data()['likedUsers']
+                          ?.contains(widget.user.email) ??
+                      false
+                  ? GestureDetector(
+                      child: Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                      onTap: _unlike,
+                    )
+                  : GestureDetector(
+                      child: Icon(Icons.favorite_border),
+                      onTap: _like,
+                    ),
               SizedBox(
                 width: 8.0,
               ),
@@ -91,7 +84,7 @@ class _FeedWidgetState extends State<FeedWidget> {
               width: 16.0,
             ),
             Text(
-              '좋아요 $liked개',
+              '좋아요 ${widget.document.data()['likedUsers']?.length ?? 0}개',
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15.0),
             ),
           ],
@@ -140,7 +133,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                       ),
                     ],
                   ),
-//                Text(widget.document['lastComment'] ?? ""),
+                Text(widget.document.data()['lastComment'] ?? ""),
                 ],
               ),
             ),
@@ -172,10 +165,8 @@ class _FeedWidgetState extends State<FeedWidget> {
   // 좋아요
   void _like() {
     // 기존 좋아요 리스트를 복사
-    var likedUsers = [];
-    if (widget.document.data().containsKey('likedUsers')) {
-      likedUsers = List<String>.from(widget.document['likedUsers']);
-    }
+    final List likedUsers =
+        List<String>.from(widget.document.data()['likedUsers'] ?? []);
 
     // 나를 추가
     likedUsers.add(widget.user.email);
@@ -193,10 +184,8 @@ class _FeedWidgetState extends State<FeedWidget> {
 
   // 좋아요 취소
   void _unlike() {
-    var likedUsers = [];
-    if (widget.document.data().containsKey('likedUsers')) {
-      likedUsers = List<String>.from(widget.document['likedUsers']);
-    }
+    final List likedUsers =
+        List<String>.from(widget.document.data()['likedUsers'] ?? []);
 
     // 나를 추가
     likedUsers.remove(widget.user.email);
@@ -226,14 +215,15 @@ class _FeedWidgetState extends State<FeedWidget> {
     .collection('comment')
     .add(data);
 
+
     final updataData = {
       'lastComment': text,
-      'commentCount': (widget.document['commentCount'] ?? 0) + 1,
+      'commentCount': (widget.document.data()['commentCount'] ?? 0) + 1,
     };
+    
     FirebaseFirestore.instance
     .collection('post')
     .doc(widget.document.id)
     .update(updataData);
-
   }
 }
